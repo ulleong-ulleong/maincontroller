@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+	<meta charset="UTF-8">
+	<title th:text="${title}"></title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}" />
+</head>
+<body>
+	<div id="wrapper">
+		<!-- 상단메뉴 start -->
+		<!--/* th:replace="~{논리주소 :: 조각이름}" */-->
+		<!--/* 논리주소: "src/main/resources/templates/" + 논리주소 + ".html" */-->
+		<div th:replace="~{fragments/header :: headerFragment}"></div>
+		<!-- 상단메뉴 end -->
+		
+		<!-- 왼쪽메뉴 start -->
+		<th:block th:if="${level == '관리자'}">
+			<div th:replace="~{fragments/aside :: asideFragment2}"></div>
+		</th:block> 
+		<th:block th:unless="${level == '관리자'}">
+			<div th:replace="~{fragments/aside :: asideFragment}"></div>
+		</th:block> 
+		
+		<!-- 왼쪽메뉴 end -->
+		
+		<!-- contents start -->
+		<div id="rightcolumn" style="overflow: auto;">
+			<!--/* 사용자 조각 정의(동적 contents) */-->
+			<!--/* layout:fragment="조각의 이름" */-->
+			<th:block layout:fragment="customContents">
+			</th:block>
+		</div>
+		<!-- contents end -->
+		
+		<!-- 하단 start -->
+		<div th:replace="~{fragments/footer :: footerFragment}"></div>
+		<!-- 하단 end -->
+	</div>
+	<!-- 사용자지정 javascript -->
+	<th:block layout:fragment="customJs"></th:block>
+	
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

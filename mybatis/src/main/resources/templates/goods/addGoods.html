@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  	  layout:decorate="~{layout/default}">
+  	
+  	<head>
+  		<style>
+  			table {
+				margin-top: 20px;
+				border: 1px solid black;
+				width: 450px;
+				table-layout: auto;
+				text-align: center;
+			}
+			
+			table td:nth-child(1){
+				background-color: cornflowerblue;
+				color : white;
+				font-weight: bolder;
+			}
+			
+			table td {
+				border: 1px solid black;
+				height: 20px;
+			}
+			
+			table input, select {
+				width: 97%;
+				text-align: center;
+			}
+			button {
+				width: 100%;
+			}
+  		</style>
+  	</head>
+  	
+  	<th:block layout:fragment="customJs">
+  		<script th:src="@{/js/jquery-3.7.1.js}"></script>
+  		<script>
+  			$(function(){
+  				function validationCheck(data){
+  					let isValid = true;
+  					if(typeof data == 'object'){
+  						
+  						$.each(data, function(){
+  							let checkValue = $(this).val();
+  							if(checkValue == null || checkValue == '' || typeof checkValue == 'undefined'){
+  		  						isValid = false;
+  		  						let eleId = $(this).attr('id');
+  		  						let cate = $(`label[for="${eleId}"]`).text();
+  		  						alert(`${cate} 필수 입력 항목입니다.`);
+  		  						$(this).focus();
+  		  						return isValid;
+  		  					}
+  						});
+  						
+  					}else{  						
+	  					if(data == null || data == '' || typeof data == 'undefined'){
+	  						isValid = false;
+	  					}
+  					}
+  					
+  					return isValid;
+  				}
+  				
+  				$('#addMemberBtn').click(function(){
+  					const formEles = $('#addMemberForm input, #addMemberForm select');
+  					console.log(typeof formEles);
+  					
+  					let isValid = validationCheck(formEles);
+  					
+  					if(isValid) $('#addMemberForm').submit();
+  				});
+  				
+  				$('#memberId').change(function(){
+  					$('#addMemberForm input').not('#memberId').prop('disabled', true);
+					$('#addMemberForm button').not('#idCheck').prop('disabled', true);
+					$('#addMemberForm select').prop('disabled', true);
+  				})
+  				
+  				$('#idCheck').click(function(){
+  					let memberId = $('#memberId').val();
+  					
+  					if(!validationCheck(memberId)){
+  						alert('회원아이디를 입력해주세요');
+  						$('#memberId').focus();
+  						return;
+  					}
+  					
+  					const request = $.ajax({
+  						url : '/member/idCheck',
+  						method : 'POST',
+  						data : {'memberId': memberId},
+  						dataType : 'json'
+  					});
+  					
+  					request.done(function(data){
+  						let isDuplicate = data;  						
+						if(isDuplicate){
+							alert('회원가입을 할 수 없는 아이디입니다.');
+							$('#memberId').val('');
+						}
+						$('#addMemberForm input').not('#memberId').prop('disabled', isDuplicate);
+						$('#addMemberForm button').not('#idCheck').prop('disabled', isDuplicate);
+						$('#addMemberForm select').prop('disabled', isDuplicate);
+  					})
+  					
+  					request.fail(function(jqXHR, textStatus){
+  						console.log(`Request failed: ${textStatus}`);
+  					});
+  					
+  				});
+  			});
+  		</script>
+  	</th:block>
+  	
+  	<!--/* layout:decorate 이부분의 파일에서 사용자 정의로 선언한 조각에 작성한 html코드를 삽입  */-->  
+	<th:block layout:fragment="customContents">
+		<form id="addGoodsForm" th:action="@{/goods/addGoods}" method="post">
+			<table>
+				<tbody>				
+					<tr>
+						<td><label for="goodsName">상품명</label></td>
+						<td>
+							<input type="text" id="goodsName" name="goodsName" 
+								   placeholder="상품명을 입력해주세요" />
+						</td>
+					</tr>
+					<tr>
+						<td><label for="goodsPrice">상품가격</label></td>
+						<td colspan="2">
+							<input type="text" id="goodsPrice" name="goodsPrice" 
+								   placeholder="상품 가격을 입력해주세요" />
+						</td>
+					</tr>
+					<tr>
+						<td><label for="goodsSellerId">판매자 목록</label></td>
+						<td>
+							<select id="goodsSellerId" name="goodsSellerId">
+								<option value="">===판매자를 선택하시오===</option>
+								<th:block th:unless="${sellerList == null}"
+										  th:each="l : ${sellerList}">
+									<option th:value="${l.memberId}" th:text="${l.memberId + ':::::' + l.memberName}"></option>
+								</th:block>
+							</select>
+						</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="2">
+							<button type="submit" id="addGoodsBtn" >상품등록</button>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+		</form>
+	</th:block>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

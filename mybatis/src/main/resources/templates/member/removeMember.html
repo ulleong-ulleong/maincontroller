@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  	  layout:decorate="~{layout/default}">
+  	
+  	<head>
+  		<style>
+  			table {
+				margin-top: 20px;
+				border: 1px solid black;
+				width: 450px;
+				table-layout: auto;
+				text-align: center;
+			}
+			
+			table td:nth-child(1){
+				background-color: cornflowerblue;
+				color : white;
+				font-weight: bolder;
+			}
+			
+			table td {
+				border: 1px solid black;
+				height: 30px;
+			}
+			
+			table input, select {
+				width: 97%;
+				text-align: center;
+			}
+			button {
+				width: 49%;
+			}
+  		</style>
+  	</head>
+  	
+  	<th:block layout:fragment="customJs">
+  		<script th:src="@{/js/jquery-3.7.1.js}"></script>
+  		<script th:inline="javascript">
+  			$(function(){
+  				//msg 없으면 null 전달, 이클립스 에러지만 작동은 한다.
+  				const msg = [[${msg}]];
+  				//null이므로 구문이 실행되지 않음.
+  				if(msg) alert(msg);
+  				
+  				function validationCheck(data){
+  					let isValid = true;
+  					if(typeof data == 'object'){
+  						
+  						$.each(data, function(){
+  							let checkValue = $(this).val();
+  							if(checkValue == null || checkValue == '' || typeof checkValue == 'undefined'){
+  		  						isValid = false;
+  		  						let eleId = $(this).attr('id');
+  		  						let cate = $(`label[for="${eleId}"]`).text();
+  		  						alert(`${cate} 필수 입력 항목입니다.`);
+  		  						$(this).focus();
+  		  						return isValid;
+  		  					}
+  						});
+  					//유효성검사
+  					}else{  						
+	  					if(data == null || data == '' || typeof data == 'undefined'){
+	  						isValid = false;
+	  					}
+  					}
+  					
+  					return isValid;
+  				}
+  				
+  				$('#removeMemberBtn').click(function(){
+  					const memberPwEles = $('#memberPw');
+  					
+  					
+  					let isValid = validationCheck(memberPwEles);
+  					
+  					if(isValid && confirm("정말로 삭제하시겠습니까?")) $('#removeMemberForm').submit();
+  				});
+  				$('#cancleBtn').click(function(){
+  					//경로 설정하는 방법, 
+  					//history.go(-1); history는 뒤로가기(이전페이지로 전환하는것과 동일하다) 
+  					location.href='/member/memberList';
+  					
+  					});
+  				})
+  			</script>
+  				
+  			
+  	</th:block>
+  	
+  	<!--/* layout:decorate 이부분의 파일에서 사용자 정의로 선언한 조각에 작성한 html코드를 삽입  */-->  
+	<th:block layout:fragment="customContents">
+		<form id="removeMemberForm" th:action="@{/member/removeMember}" method="post">
+			<table>
+				<tbody>		
+					<tr>
+						<td><label for="memberPw">회원비밀번호</label></td>
+						<td colspan="2">
+							<input type="hidden" id="memberId" name="memberId" th:value="${memberId}" readonly="readonly"/>
+							<input type="password" id="memberPw" name="memberPw" 
+								   placeholder="회원의 비밀번호를 입력해주세요" />
+						</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="2">
+							<button type="button" id="removeMemberBtn" >회원삭제</button>
+							<button type="button" id="cancleBtn"  >취소</button>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+		</form>
+	</th:block>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

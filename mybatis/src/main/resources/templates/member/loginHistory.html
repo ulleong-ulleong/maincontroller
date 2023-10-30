@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  	  layout:decorate="~{layout/default}">
+  	  
+  	<head>
+  		<style>
+  			table {
+				border: 1px solid black;
+				table-layout: auto;
+				text-align: center;
+			}
+			th {
+				border: 1px solid black;
+				width : 100px;
+				background-color: cornflowerblue;
+				color: azure;
+				height: 30px;
+			}
+			td {
+				border: 1px solid black;
+				height: 30px;
+			}
+  		</style>
+  	</head>
+  	
+  	<!--/* layout:decorate 이부분의 파일에서 사용자 정의로 선언한 조각에 작성한 html코드를 삽입  */-->  
+	<th:block layout:fragment="customContents">
+	<!-- 조각을 화면에 넣는 방법 -->
+		<div th:include="~{search/search :: searchFragment}"></div><br>
+		<!-- replace : 내가 지금 교체하려고 하는 내용 중심으로 교체, tag는 div든 th:block이든 상관없음. 새로운 base를 그리는 듯한 느낌.
+			include : 앞에 있는 tag가 중요, 그 안의 tag에 삽입, 음 뭐랄까... base를 놓고 그 위에 일부 조각을 넣은 듯한 느낌. -->
+		<table>
+			<thead>
+				<tr>
+					<th>로그인번호</th>
+					<th>로그인 아이디</th>
+					<th>회원이름</th>
+					<th>회원이메일</th>
+					<th>로그인 일자</th>
+					<th>로그아웃 일자</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:if="${loginHistory == null}">
+					<td colspan="6">로그인 이력이 없습니다.</td>
+				</tr>
+				<tr th:unless="${loginHistory == null}" th:each="l : ${loginHistory}">
+					<td th:text="${l.loginNum}"></td>
+					<td th:text="${l.loginId}"></td>
+				
+					<th:block th:object="${l.member}">
+						<td th:text="*{memberName}"></td>
+						<td th:text="*{memberEmail}"></td>
+					</th:block>
+					
+					<td th:text="${l.loginDate}"></td>
+					<td th:text="${l.logoutDate}"></td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="6">
+						<a th:href="@{/member/loginHistory}">[시작점]</a>
+						
+						<a th:if="${currentPage > 1}"
+							th:href="@{/member/loginHistory(currentPage=${currentPage-1})}">[이전]</a>
+						<span th:unless="${currentPage > 1}">[이전]</span>
+						<th:block th:each="num : ${#numbers.sequence(startPageNum, endPageNum)}">
+						<!-- numbers.sequence : 배열을 만들어줌 -->
+						<!-- 마지막페이지를 제외한 다른페이지는 클릭할 수 있게 활성화,
+							<span에 있는 th:text=|[${num}]|은 절댓값 -->
+						<a th:if="${num != currentPage}"
+							th:href="@{/member/loginHistory(currentPage=${num})}">[[${'[' + num + ']'}]]</a>
+						<span th:unless="${num != currentPage}" th:text="|[${num}]|"></span>
+						
+						</th:block>
+						<a th:if="${currentPage < lastPage}"
+							th:href="@{/member/loginHistory(currentPage=${currentPage+1})}">[다음]</a>
+						<span th:unless="${currentPage < lastPage}">[다음]</span>
+						<a th:href="@{/member/loginHistory(currentPage=${lastPage})}">[나락]</a>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</th:block>
+
+</html>
+
+
+
+
+

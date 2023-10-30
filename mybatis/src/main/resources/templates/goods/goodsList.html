@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  	  layout:decorate="~{layout/default}">
+  	  
+  	<head>
+  		<style>
+  			table {
+				border: 1px solid black;
+				table-layout: auto;
+				text-align: center;
+			}
+			th {
+				border: 1px solid black;
+				width : 100px;
+				background-color: cornflowerblue;
+				color: azure;
+				height: 30px;
+			}
+			td {
+				border: 1px solid black;
+				height: 30px;
+			}
+  		</style>
+  	</head>
+  	
+  	<!--/* layout:decorate 이부분의 파일에서 사용자 정의로 선언한 조각에 작성한 html코드를 삽입  */-->  
+	<th:block layout:fragment="customContents">
+	<!-- 조각을 화면에 넣는 방법 -->
+		<div th:include="~{search/search :: searchFragment}"></div><br>
+		<!-- replace : 내가 지금 교체하려고 하는 내용 중심으로 교체, tag는 div든 th:block이든 상관없음. 새로운 base를 그리는 듯한 느낌.
+			include : 앞에 있는 tag가 중요, 그 안의 tag에 삽입, 음 뭐랄까... base를 놓고 그 위에 일부 조각을 넣은 듯한 느낌. -->
+		<table>
+			<thead>
+				<tr>
+					<th>상품코드</th>
+					<th>상품명</th>
+					<th>상품가격</th>
+					<th>판매자 아이디</th>
+					<th>판매자 이메일</th>
+					<th>상품등록일자</th>
+					<th>수정</th>
+					<th>삭제</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:if="${goodsList == null}">
+					<td colspan="8">상품의 목록이 없습니다.</td>
+				</tr>
+				<tr th:unless="${goodsList == null}" th:each="l : ${goodsList}">
+					<td th:text="${l.goodsCode}"></td>
+					<td th:text="${l.goodsName}"></td>
+					<td th:text="${l.goodsPrice}"></td>
+					
+					<th:block th:object="${l.memberInfo}">
+						<td th:text="*{memberId}"></td>
+						<td th:text="*{memberEmail}"></td>
+					</th:block>
+					
+					<td th:text="${l.goodsRegDate}"></td>
+					<td>
+						<a th:href="@{#}">수정</a>
+					</td>
+					<td>
+						<a th:href="@{#}">삭제</a>
+					</td>
+					<!-- 
+					<tr th:unless="${goodsList == null}" th:each="l : ${goodsList}">
+					<td th:text="${l.goodsCode}"></td>
+					<td th:text="${l.goodsName}"></td>
+					<td th:text="${l.goodsPrice}"></td>
+					<td th:text="${l.goodsSellerId}"></td>
+					<td th:text="${l.memberInfo.memberEmail}"></td>
+								객체의 속성값으로 접근해서 출력함. 
+					<td th:text="${l.goodsRegDate}"></td>
+					<td>
+						<a th:href="@{#}">수정</a>
+					</td>
+					<td>
+						<a th:href="@{#}">삭제</a>
+					</td>
+					 -->
+				</tr>
+			</tbody>
+		</table>
+	</th:block>
+
+</html>
+
+
+
+
+

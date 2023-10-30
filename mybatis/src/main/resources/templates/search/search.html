@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeLeaf.org">
+
+	<div th:fragment="searchFragment">
+		<form action="@{/member/memberList}" method="get">
+			<select name ="searchKey">
+				<option value="memberId">회원아이디</option>
+				<option value="memberLevel">회원등급</option>
+				<option value="memberName">회원이름</option>
+				<option value="memberEmail">회원이메일</option>
+			</select>
+			<!-- option value값을 DB에 있는 컬럼과 동일하게 작성해도 되지만 F12로 스키마가 들어나는 것은 좋지 않다. -->
+			<input type="text" name="searchValue" placeholder="검색어를 입력해보거라" />
+			<button type="submit">검색</button>
+		</form>
+	</div>
+</html>

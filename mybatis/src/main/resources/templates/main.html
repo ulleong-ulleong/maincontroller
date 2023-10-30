@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  	  layout:decorate="~{layout/default}">
+  	
+  	<!--/* layout:decorate 이부분의 파일에서 사용자 정의로 선언한 조각에 작성한 html코드를 삽입  */-->  
+	<th:block layout:fragment="customContents">
+		<h1 th:text="${content}"></h1>
+	</th:block>
+
+</html>
+
+
+
+
+
